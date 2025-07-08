@@ -1,0 +1,54 @@
+@import 'normalize.css';
+
+:root {
+  --light-color: #ffffff;
+  --black-color: #222222;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  color: var(--light-color);
+  background-color: var(--black-color);
+}
+
+.main {
+  flex: 1 1 auto;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 15px;
+  max-width: 386px;
+}
+
+.link-reset {
+  text-decoration: none;
+  color: inherit;
+}
+
+.list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-reset {
+  border: none;
+  padding: 0;
+  color: inherit;
+  background-color: transparent;
+  cursor: pointer;
+}
