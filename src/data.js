@@ -44,7 +44,7 @@ const quizData = [
     answers: [
       {
         answer_title: 'Введите телефон',
-        type: 'text',
+        type: 'tel',
       },
     ],
   },

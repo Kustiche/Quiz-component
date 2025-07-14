@@ -52,3 +52,52 @@ body {
   background-color: transparent;
   cursor: pointer;
 }
+
+.error {
+  outline: 3px solid red !important;
+}
+
+.quiz {
+  border: 1px solid #000;
+  width: 600px;
+  min-height: 100px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.quiz__questions {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.quiz-question {
+  &__title {
+    font-size: 25px;
+    margin-bottom: 10px;
+  }
+
+  &__answers {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  &__label {
+    margin-bottom: 10px;
+  }
+
+  &__answers input[type='text'] {
+    width: 200px;
+    height: 40px;
+    padding-left: 10px;
+  }
+
+  &__btn {
+    color: #fff;
+    background-color: #000;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+}
