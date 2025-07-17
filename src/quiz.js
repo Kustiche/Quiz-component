@@ -1,12 +1,12 @@
 function quizTemplate(data, dataLength, options) {
   const { number, title } = data;
-  const { nextBtnText } = options;
+  const { nextBtnText, backBtnText } = options;
 
   const answers = data.answers.map((item) => {
     return `
       <label class="quiz-question__label">
         <input class="quiz-question__answer" type=${item.type} name=${data.answer_alias} ${
-      item.type === 'text' && item.type === 'tel' ? 'placeholder="Введите ваш ответ"' : ''
+      item.type === 'text' || item.type === 'tel' ? 'placeholder="Введите ваш ответ"' : ''
     } value="${item.type !== 'text' && item.type !== 'tel' ? item.answer_title : ''}" data-valid="false">
         <span>${item.answer_title}</span>
       </label>
@@ -21,7 +21,10 @@ function quizTemplate(data, dataLength, options) {
         <div class="quiz-question__answers">
           ${answers.join('')}
         </div>
-        <button class="quiz-question__btn" type="button" data-next-btn>${nextBtnText}</button>
+        <div class="quiz-question__btns">
+          <button class="quiz-question__btn" type="button" data-back-btn>${backBtnText}</button>
+          <button class="quiz-question__btn" type="button" data-next-btn>${nextBtnText}</button>  
+        </div>
       </div>
     </div>
   `;
@@ -42,7 +45,7 @@ class Quiz {
   }
 
   init() {
-    this.el.innerHTML = quizTemplate(quizData[this.counter], this.dataLength, this.options);
+    this.el.innerHTML = quizTemplate(this.data[this.counter], this.dataLength, this.options);
   }
 
   events() {
@@ -52,6 +55,10 @@ class Quiz {
         this.nextQuestion();
       }
 
+      if (e.target === document.querySelector('[data-back-btn]')) {
+        this.backQuestion();
+      }
+
       if (e.target === document.querySelector('[data-send]')) {
         this.send();
       }
@@ -59,11 +66,17 @@ class Quiz {
 
     this.el.addEventListener('change', (e) => {
       if (e.target.tagName === 'INPUT') {
-        if (e.target.type !== 'checkbox' && e.target.type !== 'radio') {
-          let elements = this.el.querySelectorAll('input');
+        let elements = this.el.querySelectorAll('input');
 
+        if (e.target.type !== 'checkbox' && e.target.type !== 'radio') {
           elements.forEach((el) => {
             el.checked = false;
+          });
+        } else if (e.target.type === 'checkbox' || e.target.type === 'radio') {
+          elements.forEach((el) => {
+            if (el.type === 'text') {
+              el.value = '';
+            }
           });
         }
 
@@ -80,13 +93,23 @@ class Quiz {
         this.init();
 
         if (this.counter + 1 === this.dataLength) {
-          this.el.insertAdjacentHTML(
-            'beforeEnd',
-            `<button class="quiz-question__btn" type="button" data-send>${this.options.sendBtnText}</button>`
-          );
+          this.el
+            .querySelector('.quiz-question__btns')
+            .insertAdjacentHTML(
+              'beforeEnd',
+              `<button class="quiz-question__btn" type="button" data-send>${this.options.sendBtnText}</button>`
+            );
           this.el.querySelector('[data-next-btn]').remove();
         }
       }
+    }
+  }
+
+  backQuestion() {
+    if (this.counter - 1 > -1) {
+      this.counter--;
+
+      this.init();
     }
   }
 
@@ -171,5 +194,6 @@ class Quiz {
 
 window.quiz = new Quiz('.quiz', quizData, {
   nextBtnText: 'Далее',
+  backBtnText: 'Назад',
   sendBtnText: 'Отправить',
 });
