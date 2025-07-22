@@ -1,3 +1,13 @@
+function selectValue(item) {
+  if (item.type === 'range') {
+    return item.value;
+  } else if (item.type !== 'text' && item.type !== 'tel') {
+    return item.answer_title;
+  } else {
+    return '';
+  }
+}
+
 function quizTemplate(data, dataLength, options) {
   const { number, title } = data;
   const { nextBtnText, backBtnText } = options;
@@ -5,10 +15,12 @@ function quizTemplate(data, dataLength, options) {
   const answers = data.answers.map((item) => {
     return `
       <label class="quiz-question__label">
-        <input class="quiz-question__answer" type=${item.type} name=${data.answer_alias} ${
+        <input class="quiz-question__answer" data-index="${item.index}" type=${item.type} name=${data.answer_alias} ${
       item.type === 'text' || item.type === 'tel' ? 'placeholder="Введите ваш ответ"' : ''
-    } value="${item.type !== 'text' && item.type !== 'tel' ? item.answer_title : ''}" data-valid="false">
-        <span>${item.answer_title}</span>
+    } value="${selectValue(item)}" data-valid="false">
+        <span class="quiz-question__text" data-index="${item.index}">${
+      item.type !== 'range' ? item.answer_title : item.answer_title + `: ${item.value}`
+    }</span>
       </label>
     `;
   });
@@ -83,6 +95,24 @@ class Quiz {
         this.tmp = this.serialize(this.el);
       }
     });
+
+    this.el.addEventListener('input', (e) => {
+      if (e.target.tagName === 'INPUT') {
+        if (e.target.type === 'range') {
+          const inputs = document.querySelectorAll('.quiz-question__answer');
+
+          inputs.forEach((el) => {
+            if (e.target.dataset.index !== el.dataset.index) {
+              if (e.target.dataset.index === '0' && e.target.value < el.value) {
+                this.changeText(e);
+              } else if (e.target.dataset.index === '1' && e.target.value > el.value) {
+                this.changeText(e);
+              }
+            }
+          });
+        }
+      }
+    });
   }
 
   nextQuestion() {
@@ -123,6 +153,9 @@ class Quiz {
           el.value ? (isValid = true) : el.classList.add('error');
           break;
         case 'tel':
+          el.value ? (isValid = true) : el.classList.add('error');
+          break;
+        case 'range':
           el.value ? (isValid = true) : el.classList.add('error');
           break;
         case 'checkbox':
@@ -189,6 +222,20 @@ class Quiz {
       }
     }
     return s;
+  }
+
+  changeText(e) {
+    const texts = document.querySelectorAll('.quiz-question__text');
+
+    this.data[this.counter].answers.forEach((question) => {
+      texts.forEach((text) => {
+        const isIndex = e.target.dataset.index === text.dataset.index && question.index === text.dataset.index;
+
+        if (isIndex) {
+          text.textContent = `${question.answer_title}: ${e.target.value}`;
+        }
+      });
+    });
   }
 }
 

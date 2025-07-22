@@ -39,6 +39,25 @@ const quizData = [
   },
   {
     number: 3,
+    title: 'Сколько дней вы готовы выделить на выплнение работы?',
+    answer_alias: 'deadline',
+    answers: [
+      {
+        answer_title: 'Минимальное количество дней',
+        type: 'range',
+        value: '30',
+        index: '0',
+      },
+      {
+        answer_title: 'Максимальное количество дней',
+        type: 'range',
+        value: '30',
+        index: '1',
+      },
+    ],
+  },
+  {
+    number: 4,
     title: 'Оставьте свой телефон, мы вам перезвоним',
     answer_alias: 'phone',
     answers: [
